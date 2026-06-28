@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RACSO Stronger</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0A0E1A;color:#F1F5F9;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+.nav{display:flex;background:#111827;border-bottom:1px solid #1E293B;position:sticky;top:0;z-index:100}
+.nav-btn{flex:1;padding:.75rem .5rem;background:none;border:none;color:#64748B;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid transparent;transition:.2s}
+.nav-btn.active{color:#E94560;border-bottom-color:#E94560}
+
+/* PAGES */
+.page{display:none;padding:1rem}
+.page.active{display:block}
+
+/* HEADER */
+.app-title{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#E94560;letter-spacing:2px;margin-bottom:.25rem}
+.app-sub{font-size:12px;color:#64748B;letter-spacing:1px;margin-bottom:1.25rem}
+
+/* WEEK SELECTOR */
+.week-label{font-size:11px;color:#64748B;letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem}
+.weeks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.wk{padding:.3rem .75rem;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #1E293B;background:#161D2E;color:#64748B;transition:.2s}
+.wk.active{background:#E94560;color:#fff;border-color:#E94560}
+
+/* DAY SELECTOR */
+.day-tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+.day-tab{flex:1;padding:.6rem;border-radius:8px;border:1px solid #1E293B;background:#161D2E;color:#64748B;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:.2s;font-family:'Inter',sans-serif}
+.day-tab.active-A{background:#E94560;color:#fff;border-color:#E94560}
+.day-tab.active-B{background:#3B82F6;color:#fff;border-color:#3B82F6}
+.day-tab.active-C{background:#22C55E;color:#fff;border-color:#22C55E}
+
+/* BLOCKS */
+.block-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#64748B;margin:1rem 0 .5rem;padding-left:.25rem}
+
+/* EXERCISE CARD */
+.ex-card{background:#161D2E;border:1px solid #1E293B;border-radius:10px;margin-bottom:.5rem;overflow:hidden}
+.ex-head{padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;gap:.5rem}
+.ex-head:active{background:#1C2539}
+.ex-name{font-size:14px;font-weight:600;flex:1;line-height:1.3}
+.ex-badge{font-size:10px;font-weight:700;padding:.2rem .5rem;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.badge-A{background:rgba(233,69,96,.15);color:#E94560}
+.badge-B{background:rgba(59,130,246,.15);color:#3B82F6}
+.badge-C{background:rgba(34,197,94,.15);color:#22C55E}
+.ex-body{display:none;border-top:1px solid #1E293B;padding:.875rem 1rem}
+.ex-body.open{display:block}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem;margin-bottom:.75rem}
+.ex-lbl{font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-val{font-size:12px;font-weight:600}
+.ex-est{font-size:11px;color:#F5A623;margin-bottom:.25rem}
+.ex-tech{font-size:11px;color:#8B5CF6;font-style:italic;margin-bottom:.75rem}
+.input-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+.input-lbl{font-size:12px;color:#64748B;min-width:85px}
+.w-input{flex:1;background:#0A0E1A;border:1px solid #1E293B;border-radius:7px;padding:.5rem .75rem;color:#F1F5F9;font-size:16px;font-weight:700;text-align:center;font-family:'Inter',sans-serif}
+.w-input:focus{outline:none;border-color:#E94560}
+.note-input{width:100%;background:#0A0E1A;border:1px solid #1E293B;border-radius:7px;padding:.5rem .75rem;color:#F1F5F9;font-size:12px;font-family:'Inter',sans-serif;resize:none}
+.note-input:focus{outline:none;border-color:#F5A623}
+.save-btn{width:100%;margin-top:.6rem;padding:.65rem;background:#E94560;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px}
+.save-btn:active{opacity:.85}
+.saved-msg{text-align:center;font-size:12px;color:#22C55E;margin-top:.35rem;min-height:18px}
+
+/* QUICK STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.25rem}
+.stat-card{background:#161D2E;border:1px solid #1E293B;border-radius:10px;padding:.75rem 1rem}
+.stat-name{font-size:11px;color:#64748B;margin-bottom:.25rem}
+.stat-val{font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px}
+.stat-val.has{color:#F5A623}
+.stat-val.empty{color:#1E293B}
+
+/* PROGRESS */
+.prog-ex{background:#161D2E;border:1px solid #1E293B;border-radius:10px;padding:.75rem 1rem;margin-bottom:.5rem}
+.prog-name{font-size:12px;font-weight:600;margin-bottom:.6rem}
+.prog-row{display:flex;gap:4px;overflow-x:auto}
+.prog-wk{flex:0 0 auto;text-align:center;min-width:32px}
+.prog-wn{font-size:9px;color:#64748B;margin-bottom:2px}
+.prog-bar-wrap{height:20px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:2px}
+.prog-bar{width:16px;border-radius:2px 2px 0 0;background:#E94560;min-height:2px}
+.prog-wv{font-size:9px;font-weight:700}
+.prog-wv.v{color:#F5A623}
+.prog-wv.e{color:#1E293B}
+
+/* SYNC STATUS */
+.sync-bar{background:#111827;border-bottom:1px solid #1E293B;padding:.4rem 1rem;font-size:11px;display:flex;align-items:center;gap:.5rem}
+.sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:#22C55E}
+.dot-err{background:#E94560}
+.dot-loading{background:#F5A623}
+
+.export-btn{width:100%;padding:.75rem;background:transparent;color:#22C55E;border:1px solid #22C55E;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1rem}
+.section-head{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#64748B;margin:1rem 0 .5rem}
+</style>
+</head>
+<body>
+
+<!-- SYNC STATUS BAR -->
+<div class="sync-bar">
+  <div class="sync-dot dot-loading" id="sdot"></div>
+  <span id="stxt">Conectando con Supabase...</span>
+</div>
+
+<!-- TOP NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('home',this)">Inicio</button>
+  <button class="nav-btn" onclick="showPage('train',this)">Entreno</button>
+  <button class="nav-btn" onclick="showPage('progress',this)">Progreso</button>
+</div>
+
+<!-- PAGE: HOME -->
+<div class="page active" id="page-home">
+  <div class="app-title">RACSO STRONGER</div>
+  <div class="app-sub">8 SEMANAS · HIPERTROFIA MÁXIMA · POST-CROSSFIT</div>
+
+  <div class="week-label">Semana activa</div>
+  <div class="weeks" id="week-bar"></div>
+
+  <div class="section-head">Pesos clave esta semana</div>
+  <div class="stats-grid" id="quick-stats"></div>
+
+  <div class="section-head">Ir al entrenamiento</div>
+  <div class="day-tabs">
+    <div class="day-tab" onclick="goTrain('A')">DÍA A<br><span style="font-size:10px;font-weight:400">Pecho·Hombro</span></div>
+    <div class="day-tab" onclick="goTrain('B')">DÍA B<br><span style="font-size:10px;font-weight:400">Espalda·Bíceps</span></div>
+    <div class="day-tab" onclick="goTrain('C')">DÍA C<br><span style="font-size:10px;font-weight:400">Pierna·Glúteo</span></div>
+  </div>
+</div>
+
+<!-- PAGE: TRAIN -->
+<div class="page" id="page-train">
+  <div class="day-tabs" style="margin-bottom:1rem">
+    <div class="day-tab" id="tab-A" onclick="setDay('A')">DÍA A</div>
+    <div class="day-tab" id="tab-B" onclick="setDay('B')">DÍA B</div>
+    <div class="day-tab" id="tab-C" onclick="setDay('C')">DÍA C</div>
+  </div>
+  <div id="train-content"></div>
+</div>
+
+<!-- PAGE: PROGRESS -->
+<div class="page" id="page-progress">
+  <button class="export-btn" onclick="exportCSV()">Exportar CSV</button>
+  <div id="prog-content"></div>
+</div>
+
+<script>
+const SB_URL = 'https://xofuhtjurljfgmnwfuvl.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZnVodGp1cmxqZmdtbndmdXZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTc1MDMsImV4cCI6MjA5NjQzMzUwM30.moE8WTXlzwfb3kIiEvBvP03Uhj3dkuZHgLeUal38L6U';
+const UID = 'racso';
+
+const DAYS = {
+  A:{label:'Día A · Pecho · Hombro · Tríceps',badge:'badge-A',tabClass:'active-A',blocks:[
+    {t:'BLOQUE 1 · PECHO',ex:[
+      {id:'A1',n:'Press Banca Barra',s:'4 series',r:'12–10–8–6 (+D)',rest:'90s',tech:'Negativa 2s · T.I. s1',est:'56–64 kg'},
+      {id:'A2',n:'Press Inclinado Mancuernas 30°',s:'4 series',r:'10–10–8–8 (+D)',rest:'75s',tech:'T.I. s1 · fallo s4',est:'26–30 kg/lado'},
+      {id:'A3',n:'Aperturas Inclinadas 45° (Cluster)',s:'7 series',r:'10 · 10s descanso',rest:'10s',tech:'Tensión continua',est:'14–16 kg/lado'},
+      {id:'A4',n:'Cruce de Poleas',s:'4 series',r:'14–14–12–10',rest:'60s',tech:'T.I. s1 · 1s contracción',est:'12–15 kg/lado'},
+    ]},
+    {t:'BLOQUE 2 · HOMBRO',ex:[
+      {id:'A5',n:'Elevaciones Laterales Sentado',s:'5 series',r:'12–12–10–10–8',rest:'60s',tech:'T.I. s1 · pausa 2s arriba',est:'10–14 kg/lado'},
+      {id:'A6',n:'Laterales De Pie (Charles Glass)',s:'4 series',r:'12–10–10–8 (+D)',rest:'60s',tech:'Impulso leve últimas reps',est:'12–16 kg/lado'},
+      {id:'A7',n:'Press Arnold Mancuernas',s:'4 series',r:'12–10–8–8',rest:'75s',tech:'Explosivo arriba · bajada 3s',est:'20–24 kg/lado'},
+      {id:'A8',n:'Pájaro Mancuernas (posterior)',s:'5 series',r:'20–20–18–15–15',rest:'45s',tech:'Estricto · sin balanceo',est:'8–12 kg/lado'},
+      {id:'A9',n:'Face Pull Polea (cuerda)',s:'3 series',r:'15',rest:'45s',tech:'Pausa 1s en max contracción',est:'15–20 kg'},
+    ]},
+    {t:'BLOQUE 3 · TRÍCEPS',ex:[
+      {id:'A10',n:'Extensión Polea Alta (barra inv.)',s:'4 series',r:'14–12–10–8 (+D)',rest:'60s',tech:'T.I. s1 · tensión continua',est:'25–32 kg'},
+      {id:'A11',n:'Press Copa Mancuerna',s:'3 series',r:'15–12–10',rest:'60s',tech:'Codo quieto · recorrido completo',est:'24–28 kg total'},
+    ]},
+  ]},
+  B:{label:'Día B · Espalda · Bíceps',badge:'badge-B',tabClass:'active-B',blocks:[
+    {t:'BLOQUE 1 · ESPALDA VERTICAL',ex:[
+      {id:'B1',n:'Jalón Agarre Invertido',s:'4 series',r:'15–12–10–8 (+D)',rest:'90s',tech:'T.I. s1 · pausa 1s abajo',est:'65–80 kg'},
+      {id:'B2',n:'Dominadas Lastradas',s:'4 series',r:'10–8–8–fallo',rest:'2min',tech:'Estiramiento completo · explosivo',est:'PC + 5–15 kg'},
+      {id:'B3',n:'Jalón Cerrado (Cluster 7x10)',s:'7 series',r:'10 · 10s descanso',rest:'10s',tech:'Tirón al esternón',est:'55–70 kg'},
+    ]},
+    {t:'BLOQUE 2 · ESPALDA HORIZONTAL',ex:[
+      {id:'B4',n:'Remo con Barra',s:'4 series',r:'12–10–8–6 (+2D)',rest:'90s',tech:'T.I. s1 · negativa 2s',est:'70–85 kg'},
+      {id:'B5',n:'Remo Mancuerna 1 Brazo (Cluster)',s:'7 series',r:'10 · alternando',rest:'10s',tech:'Posa mancuerna cada rep',est:'36–40 kg'},
+      {id:'B6',n:'Remo Polea Baja Estrecho',s:'5 series',r:'12 (+2D últimas)',rest:'60s',tech:'T.I. todas · omóplatos 1s',est:'60–75 kg'},
+      {id:'B7',n:'Pullover Polea',s:'4 series',r:'20–18–15–15',rest:'45s',tech:'Tensión continua',est:'25–35 kg'},
+    ]},
+    {t:'BLOQUE 3 · BÍCEPS',ex:[
+      {id:'B8',n:'Curl Barra Z',s:'4 series',r:'12–10–8–6 (+D)',rest:'75s',tech:'T.I. s1 · codos pegados',est:'30–36 kg'},
+      {id:'B9',n:'Curl 21 con Barra Z',s:'3 series',r:'7+7+7',rest:'90s',tech:'Sin balanceo',est:'20–24 kg'},
+      {id:'B10',n:'Curl Alterno 90° (superserie)',s:'3 series',r:'12–10–8',rest:'15s brazos',tech:'Supinación máxima',est:'16–20 kg/lado'},
+      {id:'B11',n:'Curl Martillo Simultáneo (SS)',s:'3 series',r:'15–12–fallo',rest:'75s SS',tech:'Estricto · codo fijo',est:'16–20 kg/lado'},
+      {id:'B12',n:'Curl Concentrado 1 Brazo',s:'3 series',r:'14–12–fallo',rest:'45s',tech:'Codo en muslo',est:'18–22 kg'},
+    ]},
+  ]},
+  C:{label:'Día C · Pierna · Glúteo',badge:'badge-C',tabClass:'active-C',blocks:[
+    {t:'BLOQUE 1 · CUÁDRICEPS',ex:[
+      {id:'C1',n:'Sentadilla Barra Libre',s:'5 series',r:'14–12–10–8–8',rest:'2min',tech:'T.I. s1 · paralela',est:'80–95 kg'},
+      {id:'C2',n:'Jaca (Hack Squat)',s:'4 series',r:'15–12–10–8 (+2D)',rest:'90s',tech:'Hasta el fondo',est:'100–130 kg'},
+      {id:'C3',n:'Prensa 45° (3 posiciones)',s:'3x3 pos.',r:'12+12+12',rest:'3–4min',tech:'Pies altos/centro/juntos',est:'140–180 kg'},
+      {id:'C4',n:'Extensión Cuádriceps (SS Hip Thrust)',s:'5 series',r:'25 (+D)',rest:'30s',tech:'Pausa 1s tope',est:'50–65 kg'},
+    ]},
+    {t:'BLOQUE 2 · FEMORAL + GLÚTEO',ex:[
+      {id:'C5',n:'Hip Thrust Barra (SS Extensión)',s:'5 series',r:'20–16–14–12–10',rest:'75s',tech:'Contracción 3s arriba',est:'80–100 kg'},
+      {id:'C6',n:'Peso Muerto Rumano',s:'5 series',r:'15–12–10–8–8 (+D)',rest:'90s',tech:'T.I. s1 · cadera atrás',est:'85–95 kg'},
+      {id:'C7',n:'Femoral Tumbado 1 Pierna',s:'4 series',r:'14–12–10–8 (+D)',rest:'60s',tech:'T.I. · pausa 1s · negativa 2s',est:'25–35 kg'},
+      {id:'C8',n:'Patada Glúteo Polea (banco 90°)',s:'4 series',r:'15–12–10–8',rest:'60s',tech:'2s aprieta arriba',est:'15–25 kg'},
+      {id:'C9',n:'Sentadilla Búlgara Mancuernas',s:'4 series',r:'15 c/pierna',rest:'60s',tech:'Tronco recto',est:'20–26 kg/lado'},
+    ]},
+    {t:'BLOQUE 3 · ADUCTOR + GEMELO',ex:[
+      {id:'C10',n:'Aductor Cerrar (SS Abductor)',s:'4 series',r:'20',rest:'15s',tech:'Lento · tensión continua',est:'30–45 kg'},
+      {id:'C11',n:'Abductor Abrir (SS)',s:'4 series',r:'20',rest:'60s SS',tech:'Lento · tensión continua',est:'20–30 kg'},
+      {id:'C12',n:'Gemelo De Pie (plataforma)',s:'5 series',r:'30–25–20–15–fallo',rest:'60s',tech:'+D última: -30% al fallo',est:'PC + 20–40 kg'},
+    ]},
+  ]},
+};
+
+let week = 1;
+let day = 'A';
+let cache = {};
+
+// ── SUPABASE ──
+async function sbGet(path){
+  const r = await fetch(SB_URL+path,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbPost(path,body,method='POST'){
+  const r = await fetch(SB_URL+path,{method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)});
+  if(!r.ok) throw new Error(await r.text());
+  try{return r.json();}catch{return null;}
+}
+
+async function loadAll(){
+  setSyncStatus('loading','Conectando...');
+  try{
+    const rows = await sbGet('/rest/v1/entrenos?usuario=eq.'+UID+'&select=*');
+    cache={};
+    rows.forEach(r=>{
+      cache[r.dia+'_'+r.ejercicio_id+'_'+r.semana]={peso:r.peso||'',nota:r.nota||'',dbId:r.id};
+    });
+    setSyncStatus('ok','Conectado · datos sincronizados');
+    return true;
+  }catch(e){
+    setSyncStatus('err','Sin conexión · modo local');
+    return false;
+  }
+}
+
+async function saveRec(d,exId,w,peso,nota){
+  const k=d+'_'+exId+'_'+w;
+  const ex=cache[k];
+  const body={usuario:UID,dia:d,ejercicio_id:exId,semana:parseInt(w),peso:String(peso),nota:String(nota),updated_at:new Date().toISOString()};
+  try{
+    if(ex&&ex.dbId){
+      await sbPost('/rest/v1/entrenos?id=eq.'+ex.dbId,body,'PATCH');
+      cache[k]={...cache[k],peso,nota};
+    }else{
+      const res=await sbPost('/rest/v1/entrenos',body,'POST');
+      cache[k]={peso,nota,dbId:res&&res[0]?res[0].id:null};
+    }
+    return true;
+  }catch(e){
+    cache[k]={peso,nota};
+    return false;
+  }
+}
+
+function getC(d,id,w){return cache[d+'_'+id+'_'+w]||{peso:'',nota:''};}
+
+// ── UI ──
+function setSyncStatus(state,txt){
+  const dot=document.getElementById('sdot');
+  document.getElementById('stxt').textContent=txt;
+  dot.className='sync-dot '+(state==='ok'?'dot-ok':state==='err'?'dot-err':'dot-loading');
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='progress') renderProgress();
+  if(id==='home'){renderWeekBar();renderStats();}
+}
+
+function goTrain(d){
+  day=d;
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{if(i===1)b.classList.add('active');else b.classList.remove('active');});
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-train').classList.add('active');
+  renderDay();
+}
+
+function renderWeekBar(){
+  const wb=document.getElementById('week-bar');
+  wb.innerHTML='';
+  for(let w=1;w<=8;w++){
+    const c=document.createElement('div');
+    c.className='wk'+(w===week?' active':'');
+    c.textContent='Sem '+w;
+    c.onclick=()=>{week=w;renderWeekBar();renderStats();};
+    wb.appendChild(c);
+  }
+}
+
+function renderStats(){
+  const refs=[{d:'A',id:'A1',n:'Press Banca'},{d:'B',id:'B4',n:'Remo Barra'},{d:'C',id:'C1',n:'Sentadilla'},{d:'C',id:'C6',n:'P.Muerto Rum.'}];
+  document.getElementById('quick-stats').innerHTML=refs.map(r=>{
+    const v=getC(r.d,r.id,week).peso;
+    return`<div class="stat-card"><div class="stat-name">${r.n}</div><div class="stat-val ${v?'has':'empty'}">${v?v+' kg':'—'}</div></div>`;
+  }).join('');
+}
+
+function setDay(d){
+  day=d;
+  renderDay();
+}
+
+function renderDay(){
+  const D=DAYS[day];
+  ['A','B','C'].forEach(x=>{
+    const t=document.getElementById('tab-'+x);
+    t.className='day-tab'+(x===day?' '+DAYS[x].tabClass:'');
+  });
+  let html='';
+  D.blocks.forEach(b=>{
+    html+=`<div class="block-title">${b.t}</div>`;
+    b.ex.forEach(ex=>{
+      const cv=getC(day,ex.id,week);
+      html+=`<div class="ex-card">
+        <div class="ex-head" onclick="tog('${ex.id}')">
+          <span class="ex-name">${ex.n}</span>
+          <span class="ex-badge ${D.badge}">${ex.s}</span>
+        </div>
+        <div class="ex-body" id="b-${ex.id}">
+          <div class="ex-grid">
+            <div><div class="ex-lbl">Reps</div><div class="ex-val">${ex.r}</div></div>
+            <div><div class="ex-lbl">Descanso</div><div class="ex-val">${ex.rest}</div></div>
+          </div>
+          <div class="ex-est">Estimado: ${ex.est}</div>
+          <div class="ex-tech">${ex.tech}</div>
+          <div class="input-row">
+            <span class="input-lbl">Peso real (kg)</span>
+            <input class="w-input" type="number" inputmode="decimal" step="0.5" placeholder="0" value="${cv.peso}" id="w-${ex.id}">
+          </div>
+          <textarea class="note-input" rows="2" placeholder="Notas..." id="n-${ex.id}">${cv.nota}</textarea>
+          <button class="save-btn" onclick="saveEx('${day}','${ex.id}')">GUARDAR</button>
+          <div class="saved-msg" id="msg-${ex.id}"></div>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('train-content').innerHTML=html;
+}
+
+function tog(id){
+  const b=document.getElementById('b-'+id);
+  b.classList.toggle('open');
+}
+
+async function saveEx(d,exId){
+  const peso=document.getElementById('w-'+exId).value;
+  const nota=document.getElementById('n-'+exId).value;
+  const msg=document.getElementById('msg-'+exId);
+  msg.textContent='Guardando...';
+  msg.style.color='#F5A623';
+  const ok=await saveRec(d,exId,week,peso,nota);
+  msg.textContent=ok?'✓ Guardado en la nube':'✓ Guardado local';
+  msg.style.color=ok?'#22C55E':'#F5A623';
+  setTimeout(()=>msg.textContent='',3000);
+  renderStats();
+}
+
+function renderProgress(){
+  let html='';
+  ['A','B','C'].forEach(d=>{
+    const D=DAYS[d];
+    html+=`<div class="section-head" style="color:${d==='A'?'#E94560':d==='B'?'#3B82F6':'#22C55E'}">${D.label}</div>`;
+    D.blocks.forEach(b=>{
+      b.ex.forEach(ex=>{
+        const vals=[];
+        for(let w=1;w<=8;w++) vals.push(getC(d,ex.id,w).peso||'');
+        const maxV=Math.max(...vals.map(v=>parseFloat(v)||0));
+        html+=`<div class="prog-ex"><div class="prog-name">${ex.n}</div><div class="prog-row">`;
+        vals.forEach((v,i)=>{
+          const h=maxV>0?Math.round((parseFloat(v)||0)/maxV*20):2;
+          html+=`<div class="prog-wk">
+            <div class="prog-wn">S${i+1}</div>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="height:${Math.max(2,h)}px;opacity:${v?1:.15}"></div></div>
+            <div class="prog-wv ${v?'v':'e'}">${v||'·'}</div>
+          </div>`;
+        });
+        html+='</div></div>';
+      });
+    });
+  });
+  document.getElementById('prog-content').innerHTML=html;
+}
+
+function exportCSV(){
+  let csv='Día,Ejercicio,S1,S2,S3,S4,S5,S6,S7,S8\n';
+  ['A','B','C'].forEach(d=>{
+    DAYS[d].blocks.forEach(b=>{
+      b.ex.forEach(ex=>{
+        const vals=[];
+        for(let w=1;w<=8;w++) vals.push(getC(d,ex.id,w).peso||'');
+        csv+=`${d},"${ex.n}",${vals.join(',')}\n`;
+      });
+    });
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='RACSO_progreso.csv';
+  a.click();
+}
+
+// ── INIT ──
+(async()=>{
+  await loadAll();
+  renderWeekBar();
+  renderStats();
+  renderDay();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LoginForm from "../components/LoginForm";
+---
+<Layout title="Login · RACSO Stronger" active="inicio">
+  <header class="mb-6 text-center">
+    <h1 class="font-[var(--font-display)] text-3xl tracking-widest text-[var(--color-accent)]">
+      RACSO STRONGER
+    </h1>
+    <p class="mt-1 text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+      Acceso privado
+    </p>
+  </header>
+
+  <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-5">
+    <LoginForm client:load />
+  </div>
+</Layout>

@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AuthGuard from "../components/AuthGuard";
+import CrossfitToggle from "../components/CrossfitToggle";
+import CardioForm from "../components/CardioForm";
+---
+<Layout title="Diario · RACSO Stronger" active="diario">
+  <AuthGuard client:load>
+    <header class="mb-5">
+      <h1 class="text-lg font-medium">Diario</h1>
+      <p class="text-xs text-[var(--color-text-muted)]">
+        Cardio y CrossFit del día de hoy
+      </p>
+    </header>
+
+    <section class="mb-6">
+      <h2 class="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
+        CrossFit
+      </h2>
+      <CrossfitToggle client:load />
+    </section>
+
+    <section class="mb-6">
+      <h2 class="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
+        Cardio
+      </h2>
+      <CardioForm client:load />
+    </section>
+  </AuthGuard>
+</Layout>

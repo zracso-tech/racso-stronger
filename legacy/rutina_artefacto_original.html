@@ -1,0 +1,687 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .wrap { padding: 1rem 0 2rem; }
+  .header { margin-bottom: 1.5rem; }
+  .header h1 { font-size: 20px; font-weight: 500; color: var(--text-primary); }
+  .header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .tab { padding: 6px 14px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); font-size: 13px; font-weight: 500; cursor: pointer; background: var(--surface-1); color: var(--text-secondary); transition: all 0.15s; }
+  .tab:hover { background: var(--surface-2); color: var(--text-primary); }
+  .tab.active { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+  .day-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--border); }
+  .day-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-primary { background: #E1F5EE; color: #0F6E56; }
+  .badge-secondary { background: #EEEDFE; color: #3C3489; }
+  .badge-rest { background: var(--bg-warning); color: var(--text-warning); }
+  .day-title { font-size: 17px; font-weight: 500; color: var(--text-primary); }
+  .day-subtitle { font-size: 13px; color: var(--text-secondary); }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin: 1rem 0 0.5rem; }
+  .exercise-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 0.875rem 1rem; margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 4px; }
+  .exercise-card.highlight { border-left: 3px solid #1D9E75; }
+  .exercise-card.technique { border-left: 3px solid #534AB7; }
+  .ex-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .ex-muscle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .ex-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; grid-column: 1/-1; line-height: 1.5; }
+  .ex-meta { text-align: right; }
+  .ex-sets { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .ex-weight { font-size: 11px; color: var(--text-accent); margin-top: 2px; }
+  .tech-pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; margin-top: 4px; }
+  .tech-isometrico { background: #EEEDFE; color: #3C3489; }
+  .tech-descendente { background: #FAECE7; color: #712B13; }
+  .tech-rest-pausa { background: #E6F1FB; color: #0C447C; }
+  .tech-fallo { background: #FCEBEB; color: #791F1F; }
+  .tech-superserie { background: #EAF3DE; color: #27500A; }
+  .note-box { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; margin-top: 1rem; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .note-box strong { color: var(--text-primary); font-weight: 500; }
+  .pautas { background: var(--surface-1); border-radius: 12px; border: 0.5px solid var(--border); padding: 1rem 1.25rem; margin-top: 1.5rem; }
+  .pautas h3 { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 0.75rem; }
+  .pauta-row { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.5; }
+  .pauta-row i { color: #1D9E75; margin-top: 2px; font-size: 15px; flex-shrink: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Rutina de hipertrofia frecuencia 2 — 5 días</h2>
+
+  <div class="header">
+    <h1>Rutina hipertrofia — frecuencia 2 · 5 días</h1>
+    <p>Diseñada para hombre de 70–80 kg · 3–5 años de experiencia · objetivo hipertrofia máxima. Cada músculo se trabaja dos veces por semana con estímulo diferenciado (volumen + fuerza / bomba + técnica).</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="show('d1')">Lunes</button>
+    <button class="tab" onclick="show('d2')">Martes</button>
+    <button class="tab" onclick="show('d3')">Miércoles</button>
+    <button class="tab" onclick="show('d4')">Jueves</button>
+    <button class="tab" onclick="show('d5')">Viernes</button>
+    <button class="tab" onclick="show('info')">Pautas</button>
+  </div>
+
+  <!-- DÍA 1 -->
+  <div class="day-panel active" id="d1">
+    <div class="day-header">
+      <span class="day-badge badge-primary">Día 1 — Lunes</span>
+      <div>
+        <div class="day-title">Pecho + Tríceps + Hombro anterior</div>
+        <div class="day-subtitle">Estímulo: fuerza-hipertrofia · énfasis en rangos bajos y técnica isométrica</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque A — Articulares principales</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Press inclinado con barra (30°)</div>
+        <div class="ex-muscle">Pectoral superior · hombro anterior · tríceps</div>
+        <div class="ex-desc">Ejercicio ancla del día. Isométrico en la primera repetición de cada serie (aguanta 8 seg en rango medio antes de iniciar las repes). Concéntrica explosiva, excéntrica 2 seg.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+        <span class="tech-pill tech-fallo">Fallo última serie</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–6</div>
+        <div class="ex-weight">~70–85 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Press plano con mancuernas</div>
+        <div class="ex-muscle">Pectoral medio · tríceps</div>
+        <div class="ex-desc">Series de rest-pausa en la última: tras fallo descansas 20 seg y sacas las que puedas. Recorrido completo, no acortes codos.</div>
+        <span class="tech-pill tech-rest-pausa">Rest-pausa</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 10–8–8+RP</div>
+        <div class="ex-weight">~28–36 kg/mano</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque B — Aislamiento pecho</div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Cruce de poleas desde abajo</div>
+        <div class="ex-muscle">Pectoral medio-inferior · fibras internas</div>
+        <div class="ex-desc">Tensión continua, recorrido de hombro a nariz. Aguanta 1 seg en la contracción máxima. Sin balanceo de tronco.</div>
+        <span class="tech-pill tech-isometrico">Contracción mantenida</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 14–12–10–10</div>
+        <div class="ex-weight">~12–18 kg/lado</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Fondos en paralelas (abiertos)</div>
+        <div class="ex-muscle">Pectoral inferior · tríceps</div>
+        <div class="ex-desc">Primera serie sin lastre. Si llegas a 15 repes cómodamente, añade 5–10 kg. Inclinación del tronco hacia adelante para enfatizar pecho.</div>
+        <span class="tech-pill tech-fallo">2 últimas al fallo</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 15–12–fallo</div>
+        <div class="ex-weight">Corporal (+peso)</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque C — Tríceps aislado</div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Extensión en polea alta con cuerda</div>
+        <div class="ex-muscle">Tríceps (cabeza lateral y medial)</div>
+        <div class="ex-desc">Superserie con press francés. Ve directo de un ejercicio al otro sin descanso. Pausa 90 seg entre superseries.</div>
+        <span class="tech-pill tech-superserie">Superserie A</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 15</div>
+        <div class="ex-weight">~25–35 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Press francés con mancuerna (copa)</div>
+        <div class="ex-muscle">Tríceps (cabeza larga)</div>
+        <div class="ex-desc">Segundo ejercicio de la superserie. Codos juntos, recorrido completo detrás de la cabeza.</div>
+        <span class="tech-pill tech-superserie">Superserie A</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 12</div>
+        <div class="ex-weight">~20–26 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque D — Hombro anterior</div>
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Elevación frontal con disco (giro alterno)</div>
+        <div class="ex-muscle">Deltoides anterior</div>
+        <div class="ex-desc">Sube el disco girando la muñeca: pares a la derecha, nones a la izquierda. Mantén el núcleo activado. Descenso controlado.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 12</div>
+        <div class="ex-weight">~10–15 kg disco</div>
+      </div>
+    </div>
+
+    <div class="note-box"><strong>Descanso entre series:</strong> Bloques de fuerza (6–8 repes) → 90 seg. Bloque bomba y superseries → 60–75 seg. Bloque tríceps superserie → 90 seg entre rondas.</div>
+  </div>
+
+  <!-- DÍA 2 -->
+  <div class="day-panel" id="d2">
+    <div class="day-header">
+      <span class="day-badge badge-secondary">Día 2 — Martes</span>
+      <div>
+        <div class="day-title">Espalda + Bíceps</div>
+        <div class="day-subtitle">Estímulo: fuerza-hipertrofia · énfasis en recorrido completo y conexión mente-músculo</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque A — Articulares espalda</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Remo con barra (prono)</div>
+        <div class="ex-muscle">Dorsal ancho · romboides · trapecio medio</div>
+        <div class="ex-desc">Ejercicio ancla. Isométrico en la primera repe de cada serie (aguanta 8 seg con la barra a altura de ombligo). Tira de codos hacia atrás, no de manos.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+        <span class="tech-pill tech-descendente">+D última serie</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–6</div>
+        <div class="ex-weight">~70–90 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Peso muerto parcial (rack pull) desde rodillas</div>
+        <div class="ex-muscle">Trapecio · erector espinal · espalda baja</div>
+        <div class="ex-desc">Recorrido desde rodillas hasta extensión completa. No es un ejercicio de espalda baja pura: concéntrate en la retracción escapular arriba. Descenso controlado 2 seg.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–8</div>
+        <div class="ex-weight">~90–110 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque B — Jalones y tracción vertical</div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Jalón al pecho agarre inverso (supino estrecho)</div>
+        <div class="ex-muscle">Dorsal · bíceps · redondo mayor</div>
+        <div class="ex-desc">Agarre supino estrecho activa más el dorsal bajo. Estiramiento completo arriba (brazos casi extendidos), pausa 1 seg antes de bajar.</div>
+        <span class="tech-pill tech-descendente">Descendente última</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–6</div>
+        <div class="ex-weight">~65–80 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Remo a 1 mano con mancuerna</div>
+        <div class="ex-muscle">Dorsal · redondo · bíceps</div>
+        <div class="ex-desc">Posa la mancuerna en el suelo en cada repe para garantizar estiramiento completo. 15 seg de descanso entre brazos. Nada de movimiento balístico.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 12–10–8</div>
+        <div class="ex-weight">~30–40 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque C — Bíceps</div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Curl con barra Z (21s)</div>
+        <div class="ex-muscle">Bíceps braquial (recorrido completo)</div>
+        <div class="ex-desc">7 repes mitad inferior → 7 repes mitad superior → 7 completas. Mismo peso en las 3 fases. No al fallo, pero las últimas 7 muy forzadas.</div>
+        <span class="tech-pill tech-isometrico">Técnica 21</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 21</div>
+        <div class="ex-weight">~25–32 kg barra</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Curl martillo alterno con mancuernas</div>
+        <div class="ex-muscle">Braquial · braquiorradial · bíceps</div>
+        <div class="ex-desc">Codos pegados al cuerpo. Supinación al subir, pronación controlada al bajar. Las dos últimas series al fallo muscular.</div>
+        <span class="tech-pill tech-fallo">2 últimas al fallo</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 12–10–fallo</div>
+        <div class="ex-weight">~16–22 kg/mano</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Curl inclinado a 45° con mancuernas (simultáneo)</div>
+        <div class="ex-muscle">Cabeza larga del bíceps (estiramiento máximo)</div>
+        <div class="ex-desc">El banco inclinado pone la cabeza larga en máximo estiramiento desde el inicio. Isométrico en la primera repe de cada serie.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 12–10–8</div>
+        <div class="ex-weight">~12–18 kg/mano</div>
+      </div>
+    </div>
+
+    <div class="note-box"><strong>Descanso:</strong> Series de fuerza (6–8 repes) → 90–120 seg. Series de bomba bíceps → 60–75 seg. Entre brazos en remo 1 mano → 15 seg.</div>
+  </div>
+
+  <!-- DÍA 3 -->
+  <div class="day-panel" id="d3">
+    <div class="day-header">
+      <span class="day-badge badge-primary">Día 3 — Miércoles</span>
+      <div>
+        <div class="day-title">Pierna completa (cuádriceps · femoral · glúteo)</div>
+        <div class="day-subtitle">Estímulo: volumen alto · técnica controlada · sin carreras de fuerza máxima</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque A — Cuádriceps</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Sentadilla con barra (libre)</div>
+        <div class="ex-muscle">Cuádriceps · glúteo · core</div>
+        <div class="ex-desc">Ejercicio rey del día. 2 series de calentamiento (50–60% del peso de trabajo). Baja hasta que los muslos pasen la paralela. Concéntrica explosiva. Sin bloqueo de rodilla arriba.</div>
+        <span class="tech-pill tech-isometrico">Isométrico 1ª repe</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 14–12–10–8</div>
+        <div class="ex-weight">~80–100 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Prensa (3 posiciones de pie)</div>
+        <div class="ex-muscle">Cuádriceps · glúteo (varía según posición)</div>
+        <div class="ex-desc">Haz las 3 posiciones sin descanso: pies abiertos arriba → pies al centro → pies juntos arriba. Eso es 1 serie. Baja siempre al máximo sin despegar la zona lumbar.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × (12+12+12)</div>
+        <div class="ex-weight">~120–150 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Jaca (hack squat)</div>
+        <div class="ex-muscle">Cuádriceps (vasto externo e interno)</div>
+        <div class="ex-desc">Baja hasta el fondo, Óscar. Rest-pausa en la última serie: fallo → 20 seg → las que puedas → 20 seg → las que puedas.</div>
+        <span class="tech-pill tech-rest-pausa">Rest-pausa última</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">2×15 + 2×10+RP</div>
+        <div class="ex-weight">~80–110 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque B — Femoral y glúteo</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Peso muerto rumano con barra</div>
+        <div class="ex-muscle">Femoral · glúteo · erector</div>
+        <div class="ex-desc">Rodillas ligeramente flexionadas fijas. La barra baja pegada a las piernas. Para en el punto de máximo estiramiento del femoral (notarás el tirón). Descendente al fallo en la última serie.</div>
+        <span class="tech-pill tech-descendente">Descendente última</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–6</div>
+        <div class="ex-weight">~70–90 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Hip thrust con barra</div>
+        <div class="ex-muscle">Glúteo mayor · femoral proximal</div>
+        <div class="ex-desc">Aguanta 3 seg en la posición alta de máxima contracción mientras expiras. Baja controlado. No uses el rebote al bajar.</div>
+        <span class="tech-pill tech-isometrico">Contracción 3 seg</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 16–14–12–10</div>
+        <div class="ex-weight">~80–100 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Femoral tumbado a 1 pierna (máquina)</div>
+        <div class="ex-muscle">Bíceps femoral · semitendinoso</div>
+        <div class="ex-desc">Pausa 1 seg en contracción máxima. Excéntrica controlada de 2 seg. Las últimas 2 series con ayuda para completar las repes.</div>
+        <span class="tech-pill tech-fallo">Fallo asistido</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–8–fallo</div>
+        <div class="ex-weight">~30–45 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque C — Aductor / abductor</div>
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Aductor + abductor con gomas (superserie)</div>
+        <div class="ex-muscle">Aductor · glúteo medio</div>
+        <div class="ex-desc">Sin descanso entre aductor y abductor. 60 seg entre rondas. Trabaja muy despacio, tensión continua.</div>
+        <span class="tech-pill tech-superserie">Superserie</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 10+10</div>
+        <div class="ex-weight">Goma media/fuerte</div>
+      </div>
+    </div>
+
+    <div class="note-box"><strong>Descanso:</strong> Sentadilla y prensa → 2–3 min. Femoral y glúteo → 90 seg. Superserie final → 60 seg entre rondas. <strong>Recuerda:</strong> en pierna nunca acortes el recorrido, aunque tengas que bajar el peso.</div>
+  </div>
+
+  <!-- DÍA 4 -->
+  <div class="day-panel" id="d4">
+    <div class="day-header">
+      <span class="day-badge badge-secondary">Día 4 — Jueves</span>
+      <div>
+        <div class="day-title">Hombros + Tríceps (2ª frecuencia)</div>
+        <div class="day-subtitle">Estímulo: bomba metabólica · volumen alto · técnica isométrica en hombro</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque A — Serie gigante de hombro</div>
+    <div class="note-box" style="margin-bottom:1rem;"><strong>Serie gigante:</strong> Haz todos los ejercicios del bloque A seguidos sin descanso entre ellos. Descansa 3 min entre rondas completas. Objetivo: congestión máxima, no llegar al fallo. 4 rondas totales.</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Elevaciones laterales con mancuernas sentado</div>
+        <div class="ex-muscle">Deltoides medial</div>
+        <div class="ex-desc">Isométrico al inicio de cada ronda: aguanta 10 seg en el punto medio antes de las repes. Codos ligeramente flexionados, sin inercia.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 rondas × 12</div>
+        <div class="ex-weight">~10–14 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Press militar con mancuernas</div>
+        <div class="ex-muscle">Deltoides anterior · medial · tríceps</div>
+        <div class="ex-desc">Baja hasta que la mancuerna roza el hombro. Subida explosiva. No bloquees el codo arriba para mantener tensión.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 rondas × 10</div>
+        <div class="ex-weight">~20–28 kg/mano</div>
+      </div>
+    </div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Elevaciones laterales de pie (estilo Charles Glass)</div>
+        <div class="ex-muscle">Deltoides medial</div>
+        <div class="ex-desc">Inclinado ligeramente, codo lidera el movimiento, no la muñeca. Último par de repes puedes darte un poco de impulso.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 rondas × 10</div>
+        <div class="ex-weight">~12–16 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Elevaciones frontales en polea baja</div>
+        <div class="ex-muscle">Deltoides anterior</div>
+        <div class="ex-desc">Tensión constante durante todo el recorrido gracias a la polea. Sube hasta la altura de los ojos.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 rondas × 12</div>
+        <div class="ex-weight">~10–15 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Pájaro con mancuernas (posterior)</div>
+        <div class="ex-muscle">Deltoides posterior · romboides</div>
+        <div class="ex-desc">Codos ligeramente flexionados. No subas más allá de la horizontal. Pausa 1 seg arriba.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 rondas × 20–25</div>
+        <div class="ex-weight">~8–12 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque B — Posterior + Facepull (cierre)</div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Facepull en polea alta con cuerda</div>
+        <div class="ex-muscle">Deltoides posterior · manguito rotador</div>
+        <div class="ex-desc">Tira hacia la cara, abre los brazos en la posición final. Importantísimo para la salud del hombro. No a fallo, trabaja la conexión.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">3 × 15 + 1 al fallo</div>
+        <div class="ex-weight">~15–25 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque C — Tríceps (2ª frecuencia)</div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Patada de tríceps en polea a 1 mano</div>
+        <div class="ex-muscle">Tríceps (cabeza lateral)</div>
+        <div class="ex-desc">Isométrico en la primera repe. Codo fijo paralelo al suelo. Pausa 1 seg en extensión completa. Descendente en la última serie.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+        <span class="tech-pill tech-descendente">Descendente última</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 14–12–10–8</div>
+        <div class="ex-weight">~10–18 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Fondos entre bancos</div>
+        <div class="ex-muscle">Tríceps · pectoral inferior</div>
+        <div class="ex-desc">Isométrico de 10 seg en la posición baja de la primera repe. Si llegas a 20 repes fácil, añade peso en el regazo.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+        <span class="tech-pill tech-fallo">Fallo</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 20</div>
+        <div class="ex-weight">Corporal (+peso)</div>
+      </div>
+    </div>
+
+    <div class="note-box"><strong>Descanso:</strong> Serie gigante → 3 min entre rondas completas (sin descanso entre ejercicios dentro de la ronda). Bloque tríceps → 75 seg entre series.</div>
+  </div>
+
+  <!-- DÍA 5 -->
+  <div class="day-panel" id="d5">
+    <div class="day-header">
+      <span class="day-badge badge-primary">Día 5 — Viernes</span>
+      <div>
+        <div class="day-title">Espalda (2ª frecuencia) + Bíceps + Pierna posterior</div>
+        <div class="day-subtitle">Estímulo: bomba · volumen · técnica descendente</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque A — Espalda (enfoque volumen)</div>
+
+    <div class="exercise-card highlight">
+      <div>
+        <div class="ex-name">Dominadas (agarre prono amplio)</div>
+        <div class="ex-muscle">Dorsal · bíceps · redondo mayor</div>
+        <div class="ex-desc">Primera serie sin lastre a 10–12 repes. Sube lastre en cada serie. Estiramiento completo al bajar (brazos casi extendidos). Fallo en las dos últimas.</div>
+        <span class="tech-pill tech-fallo">Fallo 2 últimas</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 10–8–fallo–fallo</div>
+        <div class="ex-weight">Corporal (+5–10 kg)</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Remo en polea baja agarre estrecho</div>
+        <div class="ex-muscle">Dorsal · trapecio medio · romboides</div>
+        <div class="ex-desc">7 series de 10 repes con solo 10 seg de descanso entre series. Método de acumulación de volumen con alta densidad. Peso moderado-alto, técnica perfecta.</div>
+        <span class="tech-pill tech-rest-pausa">Alta densidad 7×10</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">7 × 10 (10 seg desc)</div>
+        <div class="ex-weight">~55–70 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Pullover en polea (brazos rígidos)</div>
+        <div class="ex-muscle">Dorsal · serrato · pectoral</div>
+        <div class="ex-desc">Muy estricto, peso moderado. Estiramiento máximo arriba, contracción total abajo. Este ejercicio cierra el trabajo de dorsal con tensión continua.</div>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 20–25</div>
+        <div class="ex-weight">~25–35 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque B — Bíceps (2ª frecuencia)</div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Curl concentrado a 1 brazo</div>
+        <div class="ex-muscle">Bíceps (pico)</div>
+        <div class="ex-desc">Isométrico en la primera repe. Supinación máxima en la parte alta. Descendente al 20% en la última serie. No muevas el codo.</div>
+        <span class="tech-pill tech-isometrico">Isométrico</span>
+        <span class="tech-pill tech-descendente">Descendente última</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 12–10–10–8</div>
+        <div class="ex-weight">~16–22 kg/mano</div>
+      </div>
+    </div>
+
+    <div class="exercise-card technique">
+      <div>
+        <div class="ex-name">Curl en polea baja (ambos brazos)</div>
+        <div class="ex-muscle">Bíceps · braquial</div>
+        <div class="ex-desc">Alta densidad: 7 series de 10 repes con 10 seg de descanso entre series. Tensión continua durante todo el recorrido. Cierre del bloque de bíceps.</div>
+        <span class="tech-pill tech-rest-pausa">Alta densidad 7×10</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">7 × 10 (10 seg desc)</div>
+        <div class="ex-weight">~20–30 kg</div>
+      </div>
+    </div>
+
+    <div class="section-label">Bloque C — Pierna posterior (femoral/glúteo 2ª frecuencia)</div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Sentadilla sumo</div>
+        <div class="ex-muscle">Femoral · aductor · glúteo</div>
+        <div class="ex-desc">2 series de calentamiento. Excéntrica lenta (3 seg). Fallo en las 3 últimas series. Pies a 45°, rodillas en la línea de los pies, baja todo lo que la flexibilidad permita.</div>
+        <span class="tech-pill tech-fallo">3 últimas al fallo</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">6 × 20–15–fallo×3</div>
+        <div class="ex-weight">~60–80 kg</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div>
+        <div class="ex-name">Patada de glúteo en polea baja</div>
+        <div class="ex-muscle">Glúteo mayor</div>
+        <div class="ex-desc">Apoyado en banco a 90°. Recorrido corto enfocado en glúteo medio. Aguanta 2 seg en contracción máxima. Isométrico en la primera repe de cada serie.</div>
+        <span class="tech-pill tech-isometrico">Isométrico + pausa 2 seg</span>
+      </div>
+      <div class="ex-meta">
+        <div class="ex-sets">4 × 14–12–10–8</div>
+        <div class="ex-weight">~15–25 kg</div>
+      </div>
+    </div>
+
+    <div class="note-box"><strong>Descanso:</strong> Dominadas y bloques de fuerza → 2 min. Bloques de alta densidad (7×10) → solo 10 seg dentro de la serie, luego 2 min antes de la siguiente. Femoral y glúteo → 90 seg.</div>
+  </div>
+
+  <!-- INFO -->
+  <div class="day-panel" id="info">
+    <div class="day-header">
+      <span class="day-badge badge-primary">Pautas generales</span>
+      <div>
+        <div class="day-title">Organización semanal y criterios de diseño</div>
+      </div>
+    </div>
+
+    <div class="pautas">
+      <h3><i class="ti ti-calendar" aria-hidden="true"></i> Estructura semanal</h3>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Lunes:</strong> Pecho + Tríceps + Hombro anterior (frecuencia 1)</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Martes:</strong> Espalda + Bíceps (frecuencia 1)</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Miércoles:</strong> Pierna completa (frecuencia 1 — más volumen)</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Jueves:</strong> Hombros + Tríceps (frecuencia 2 — alta densidad)</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Viernes:</strong> Espalda + Bíceps + Pierna posterior (frecuencia 2)</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Fin de semana:</strong> descanso activo o cardio suave (caminar, bici, movilidad)</span></div>
+    </div>
+
+    <div class="pautas" style="margin-top:1rem;">
+      <h3><i class="ti ti-refresh" aria-hidden="true"></i> Recuperación muscular por grupos</h3>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Pecho:</strong> frecuencia 1 (Lunes). Segunda frecuencia indirecta vía fondos y press del Jueves. 72h entre estímulos directos.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Espalda:</strong> Martes (fuerza-hipertrofia) → Viernes (volumen). 72h de recuperación.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Pierna:</strong> Miércoles (completa, más volumen cuádriceps) → Viernes (femoral y glúteo). 48h entre cuádriceps-femoral está justificado por énfasis diferenciado.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Hombros:</strong> Lunes (hombro anterior, indirecto) → Jueves (directo, serie gigante). 72h.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Tríceps:</strong> Lunes (fuerza) → Jueves (bomba). 72h.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Bíceps:</strong> Martes (fuerza + técnica) → Viernes (bomba + densidad). 72h.</span></div>
+    </div>
+
+    <div class="pautas" style="margin-top:1rem;">
+      <h3><i class="ti ti-tool" aria-hidden="true"></i> Técnicas aplicadas y cómo ejecutarlas</h3>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Isométrico:</strong> En la primera repe de cada serie, para en el rango medio y aguanta 8–10 seg antes de iniciar las repes pautadas.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Descendente (+D):</strong> Al llegar al fallo en la última serie, baja el peso un 20% y continúa sin descanso. +2D = dos bajadas del 20%.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Rest-pausa:</strong> Al fallo, descansa 15–20 seg (respiraciones), y saca las repes que puedas. Se puede repetir 1–2 veces más.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Alta densidad (7×10 con 10 seg):</strong> 7 series seguidas de 10 repes con solo 10 seg entre ellas. Peso moderado, nunca al fallo. Saturación de sangre máxima.</span></div>
+      <div class="pauta-row"><i class="ti ti-point-filled"></i><span><strong>Serie gigante:</strong> Todos los ejercicios del bloque A del jueves se hacen seguidos sin descanso. 3 min entre rondas completas.</span></div>
+    </div>
+
+    <div class="pautas" style="margin-top:1rem;">
+      <h3><i class="ti ti-scale" aria-hidden="true"></i> Sobre los pesos estimados</h3>
+      <div class="pauta-row"><i class="ti ti-alert-triangle"></i><span>Los pesos son orientativos para 70–80 kg y 3–5 años de experiencia. Usa la <strong>primera semana como toma de contacto</strong>: apunta tus pesos reales.</span></div>
+      <div class="pauta-row"><i class="ti ti-alert-triangle"></i><span>El criterio es simple: si en la serie indicada no llegas al número de repes, el peso es demasiado alto. Si llegas con facilidad y sin esfuerzo, súbelo.</span></div>
+      <div class="pauta-row"><i class="ti ti-alert-triangle"></i><span>En ejercicios técnicos (sentadilla, peso muerto, press banca), prioriza la técnica sobre el peso. Nunca sacrifiques recorrido por kilos.</span></div>
+    </div>
+
+    <div class="legend">
+      <span class="tech-pill tech-isometrico">Isométrico</span>
+      <span class="tech-pill tech-descendente">Descendente</span>
+      <span class="tech-pill tech-rest-pausa">Rest-pausa / Alta densidad</span>
+      <span class="tech-pill tech-fallo">Fallo muscular</span>
+      <span class="tech-pill tech-superserie">Superserie / Gigante</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const map = {d1:0,d2:1,d3:2,d4:3,d5:4,info:5};
+  tabs[map[id]].classList.add('active');
+}
+</script>

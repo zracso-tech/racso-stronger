@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AuthGuard from "../components/AuthGuard";
+import Progreso from "../components/Progreso";
+---
+<Layout title="Progreso · RACSO Stronger" active="progreso">
+  <AuthGuard client:load>
+    <header class="mb-4">
+      <h1 class="text-lg font-medium">Progreso</h1>
+      <p class="text-xs text-[var(--color-text-muted)]">
+        Evolución de pesos, cardio y CrossFit
+      </p>
+    </header>
+    <Progreso client:load />
+  </AuthGuard>
+</Layout>

@@ -1,0 +1,90 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { RUTINA, DIA_COLORS } from "../data/routine";
+
+const hoyIdx = (new Date().getDay() + 6) % 7; // 0 = Lun, 6 = Dom
+const diaHoy = hoyIdx <= 4 ? RUTINA[hoyIdx] : null;
+---
+<Layout title="RACSO Stronger" active="inicio">
+  <header class="mb-6">
+    <h1 class="font-[var(--font-display)] text-4xl tracking-widest text-[var(--color-accent)]">
+      RACSO STRONGER
+    </h1>
+    <p class="mt-1 text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+      Hipertrofia · frecuencia 2 · 5 días
+    </p>
+  </header>
+
+  {diaHoy ? (
+    <section class="mb-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
+      <div class="text-[11px] uppercase tracking-widest text-[var(--color-text-muted)]">
+        Hoy es {diaHoy.nombre}
+      </div>
+      <div class={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${DIA_COLORS[diaHoy.code].chip}`}>
+        Día {diaHoy.code}
+      </div>
+      <h2 class="mt-2 text-lg font-medium text-[var(--color-text-primary)]">
+        {diaHoy.titulo}
+      </h2>
+      <p class="mt-1 text-xs text-[var(--color-text-secondary)]">
+        {diaHoy.estimulo}
+      </p>
+      <a
+        href="/entreno"
+        class="mt-4 block rounded-xl bg-[var(--color-accent)] py-3 text-center text-sm font-bold uppercase tracking-wider text-white"
+      >
+        Empezar entreno
+      </a>
+    </section>
+  ) : (
+    <section class="mb-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
+      <div class="text-[11px] uppercase tracking-widest text-[var(--color-text-muted)]">
+        Día de descanso
+      </div>
+      <h2 class="mt-2 text-lg font-medium">Recuperación activa</h2>
+      <p class="mt-1 text-xs text-[var(--color-text-secondary)]">
+        Movilidad, caminar o cardio suave. Si quieres registrar cardio, ve a Diario.
+      </p>
+    </section>
+  )}
+
+  <h3 class="mb-2 text-[11px] uppercase tracking-widest text-[var(--color-text-muted)]">
+    Estructura de la semana
+  </h3>
+  <ul class="grid grid-cols-1 gap-2">
+    {RUTINA.map((d) => (
+      <li>
+        <a
+          href={`/entreno?dia=${d.code}`}
+          class="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3"
+        >
+          <span class={`inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white ${DIA_COLORS[d.code].bg}`}>
+            {d.code}
+          </span>
+          <span class="flex-1">
+            <span class="block text-sm font-medium">{d.titulo}</span>
+            <span class="block text-[11px] text-[var(--color-text-muted)]">{d.nombre}</span>
+          </span>
+          <span class="text-[var(--color-text-muted)]">›</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="mt-6 grid grid-cols-2 gap-2">
+    <a
+      href="/diario"
+      class="rounded-xl border border-[var(--color-accent-warm)]/40 bg-[var(--color-accent-warm)]/10 p-3 text-center text-[var(--color-accent-warm)]"
+    >
+      <div class="text-[10px] uppercase tracking-wider">Cardio hoy</div>
+      <div class="mt-1 text-sm font-semibold">Registrar →</div>
+    </a>
+    <a
+      href="/diario"
+      class="rounded-xl border border-[var(--color-accent-ok)]/40 bg-[var(--color-accent-ok)]/10 p-3 text-center text-[var(--color-accent-ok)]"
+    >
+      <div class="text-[10px] uppercase tracking-wider">CrossFit hoy</div>
+      <div class="mt-1 text-sm font-semibold">Marcar →</div>
+    </a>
+  </div>
+</Layout>

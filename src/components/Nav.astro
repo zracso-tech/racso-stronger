@@ -1,0 +1,39 @@
+---
+import SignOutButton from "./SignOutButton";
+
+interface Props {
+  active: "inicio" | "entreno" | "diario" | "progreso";
+}
+const { active } = Astro.props;
+
+const items = [
+  { id: "inicio", label: "Inicio", href: "/" },
+  { id: "entreno", label: "Entreno", href: "/entreno" },
+  { id: "diario", label: "Diario", href: "/diario" },
+  { id: "progreso", label: "Progreso", href: "/progreso" },
+] as const;
+---
+<nav class="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-surface-1)]/95 backdrop-blur">
+  <div class="mx-auto flex max-w-screen-sm items-center">
+    <ul class="flex flex-1">
+      {items.map((it) => (
+        <li class="flex-1">
+          <a
+            href={it.href}
+            class:list={[
+              "block px-2 py-3 text-center text-[11px] font-semibold uppercase tracking-wider transition-colors border-b-2",
+              active === it.id
+                ? "border-[var(--color-accent)] text-[var(--color-accent)]"
+                : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]",
+            ]}
+          >
+            {it.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="pr-3">
+      <SignOutButton client:load />
+    </div>
+  </div>
+</nav>
