@@ -33,7 +33,7 @@ export interface CardioRow {
   id: number;
   user_id: string;
   fecha: string;
-  tipo: "bici" | "cinta_andar" | "cinta_correr";
+  tipo: "bici" | "cinta_andar" | "cinta_correr" | "correr";
   minutos: number | null;
   km: number | null;
   kcal: number | null;

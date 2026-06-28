@@ -555,6 +555,7 @@ export const CARDIO_TIPOS = [
   { value: "bici", label: "Bici" },
   { value: "cinta_andar", label: "Cinta · andando" },
   { value: "cinta_correr", label: "Cinta · corriendo" },
+  { value: "correr", label: "Correr (calle)" },
 ] as const;
 
 export type CardioTipo = (typeof CARDIO_TIPOS)[number]["value"];

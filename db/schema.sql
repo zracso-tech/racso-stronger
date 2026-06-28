@@ -32,7 +32,7 @@ create table public.cardio (
   id          bigserial primary key,
   user_id     uuid not null default auth.uid() references auth.users(id) on delete cascade,
   fecha       date not null default current_date,
-  tipo        text not null check (tipo in ('bici','cinta_andar','cinta_correr')),
+  tipo        text not null check (tipo in ('bici','cinta_andar','cinta_correr','correr')),
   minutos     int,
   km          numeric,
   kcal        int,

@@ -16,6 +16,7 @@ export default function CardioForm() {
   const [minutos, setMinutos] = useState("");
   const [km, setKm] = useState("");
   const [kcal, setKcal] = useState("");
+  const [nota, setNota] = useState("");
   const [sesiones, setSesiones] = useState<CardioRow[]>([]);
   const [guardando, setGuardando] = useState(false);
   const [cargando, setCargando] = useState(true);
@@ -36,7 +37,7 @@ export default function CardioForm() {
 
   async function guardar(e: React.FormEvent) {
     e.preventDefault();
-    if (!minutos && !km && !kcal) return;
+    if (!minutos && !km && !kcal && !nota) return;
     setGuardando(true);
     await supabase.from("cardio").insert({
       fecha: hoy(),
@@ -44,10 +45,12 @@ export default function CardioForm() {
       minutos: minutos ? parseInt(minutos) : null,
       km: km ? parseFloat(km) : null,
       kcal: kcal ? parseInt(kcal) : null,
+      nota: nota || null,
     });
     setMinutos("");
     setKm("");
     setKcal("");
+    setNota("");
     setGuardando(false);
     cargar();
   }
@@ -92,9 +95,22 @@ export default function CardioForm() {
           <Field label="Kcal" v={kcal} on={setKcal} placeholder="250" step="1" />
         </div>
 
+        <label className="mt-3 block">
+          <span className="mb-1 block text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+            Notas
+          </span>
+          <textarea
+            rows={2}
+            value={nota}
+            onChange={(e) => setNota(e.target.value)}
+            placeholder="Ritmo, sensaciones, ruta…"
+            className="w-full resize-y rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs leading-relaxed focus:border-[var(--color-accent-warm)] focus:outline-none"
+          />
+        </label>
+
         <button
           type="submit"
-          disabled={guardando || (!minutos && !km && !kcal)}
+          disabled={guardando || (!minutos && !km && !kcal && !nota)}
           className="mt-3 w-full rounded-lg bg-[var(--color-accent-warm)] py-2.5 text-sm font-bold uppercase tracking-wider text-[var(--color-bg)] disabled:opacity-50"
         >
           {guardando ? "Guardando…" : "Añadir sesión"}
@@ -120,23 +136,30 @@ export default function CardioForm() {
             {sesiones.map((s) => (
               <li
                 key={s.id}
-                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3"
+                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3"
               >
-                <div className="flex-1">
-                  <div className="text-xs font-semibold">{labelTipo(s.tipo)}</div>
-                  <div className="mt-0.5 text-[11px] text-[var(--color-text-muted)] tabular-nums">
-                    {s.minutos ? `${s.minutos} min` : ""}
-                    {s.km ? ` · ${s.km} km` : ""}
-                    {s.kcal ? ` · ${s.kcal} kcal` : ""}
+                <div className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold">{labelTipo(s.tipo)}</div>
+                    <div className="mt-0.5 text-[11px] text-[var(--color-text-muted)] tabular-nums">
+                      {s.minutos ? `${s.minutos} min` : ""}
+                      {s.km ? ` · ${s.km} km` : ""}
+                      {s.kcal ? ` · ${s.kcal} kcal` : ""}
+                    </div>
                   </div>
+                  <button
+                    onClick={() => borrar(s.id)}
+                    className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-red-400"
+                    aria-label="Borrar sesión"
+                  >
+                    Borrar
+                  </button>
                 </div>
-                <button
-                  onClick={() => borrar(s.id)}
-                  className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] hover:text-red-400"
-                  aria-label="Borrar sesión"
-                >
-                  Borrar
-                </button>
+                {s.nota && (
+                  <div className="mt-2 border-t border-[var(--color-border)] pt-2 text-[11px] leading-relaxed text-[var(--color-text-secondary)]">
+                    {s.nota}
+                  </div>
+                )}
               </li>
             ))}
           </ul>

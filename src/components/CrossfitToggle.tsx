@@ -83,13 +83,18 @@ export default function CrossfitToggle() {
       </div>
 
       {activo && (
-        <input
-          type="text"
-          value={nota}
-          onChange={(e) => guardarNota(e.target.value)}
-          placeholder="Nota (WOD, intensidad…)"
-          className="mt-3 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5 text-xs focus:border-[var(--color-accent-ok)] focus:outline-none"
-        />
+        <div className="mt-3">
+          <label className="mb-1 block text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
+            WOD / Notas
+          </label>
+          <textarea
+            rows={4}
+            value={nota}
+            onChange={(e) => guardarNota(e.target.value)}
+            placeholder="Escribe el WOD, sensaciones, tiempos, RPE…"
+            className="w-full resize-y rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm leading-relaxed focus:border-[var(--color-accent-ok)] focus:outline-none"
+          />
+        </div>
       )}
     </div>
   );

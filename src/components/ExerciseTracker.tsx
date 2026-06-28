@@ -50,18 +50,37 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
     if (!hasSession) return;
     setEstado("saving");
     const hoy = new Date().toISOString().slice(0, 10);
-    const { error } = await supabase.from("entrenos").upsert(
-      {
-        fecha: hoy,
-        dia,
-        ejercicio_id: ejercicioId,
-        peso: peso === "" ? null : Number(peso),
-        nota,
-      },
-      { onConflict: "user_id,dia,ejercicio_id,fecha", ignoreDuplicates: false },
-    );
+    const pesoVal = peso === "" ? null : Number(peso);
+
+    const { data: existente, error: errSelect } = await supabase
+      .from("entrenos")
+      .select("id")
+      .eq("dia", dia)
+      .eq("ejercicio_id", ejercicioId)
+      .eq("fecha", hoy)
+      .maybeSingle();
+
+    if (errSelect) {
+      console.error("select", errSelect);
+      setEstado("err");
+      setTimeout(() => setEstado("idle"), 2500);
+      return;
+    }
+
+    let error;
+    if (existente) {
+      ({ error } = await supabase
+        .from("entrenos")
+        .update({ peso: pesoVal, nota })
+        .eq("id", existente.id));
+    } else {
+      ({ error } = await supabase
+        .from("entrenos")
+        .insert({ fecha: hoy, dia, ejercicio_id: ejercicioId, peso: pesoVal, nota }));
+    }
+
     if (error) {
-      console.error(error);
+      console.error("save", error);
       setEstado("err");
       setTimeout(() => setEstado("idle"), 2500);
       return;
