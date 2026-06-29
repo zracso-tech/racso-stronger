@@ -19,7 +19,8 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
   const [ultimo, setUltimo] = useState<Registro | null>(null);
   const [estado, setEstado] = useState<"idle" | "saving" | "ok" | "err">("idle");
   const [hasSession, setHasSession] = useState<boolean | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const cargadoRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -36,21 +37,39 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
         .limit(1);
       if (active && rows && rows.length > 0) {
         const r = rows[0];
-        setUltimo({ peso: r.peso?.toString() ?? "", nota: r.nota ?? "", fecha: r.fecha });
-        setPeso(r.peso?.toString() ?? "");
-        setNota(r.nota ?? "");
+        const pesoStr = r.peso?.toString() ?? "";
+        const notaStr = r.nota ?? "";
+        setUltimo({ peso: pesoStr, nota: notaStr, fecha: r.fecha });
+        setPeso(pesoStr);
+        setNota(notaStr);
       }
+      cargadoRef.current = true;
     });
     return () => {
       active = false;
     };
   }, [dia, ejercicioId]);
 
-  async function guardar() {
-    if (!hasSession) return;
+  // Debounce de guardado: cada cambio en peso/nota programa un save a 900ms,
+  // cancelando el pendiente. useEffect cleanup garantiza closures frescas.
+  useEffect(() => {
+    if (!dirty || !hasSession) return;
+    const t = setTimeout(() => {
+      void guardar(peso, nota);
+    }, 900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [peso, nota, dirty, hasSession]);
+
+  async function guardar(pesoActual: string, notaActual: string) {
     setEstado("saving");
     const hoy = new Date().toISOString().slice(0, 10);
-    const pesoVal = peso === "" ? null : Number(peso);
+    const pesoVal = pesoActual === "" ? null : Number(pesoActual.replace(",", "."));
+    if (pesoVal !== null && Number.isNaN(pesoVal)) {
+      setEstado("err");
+      setTimeout(() => setEstado("idle"), 2500);
+      return;
+    }
 
     const { data: existente, error: errSelect } = await supabase
       .from("entrenos")
@@ -71,12 +90,12 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
     if (existente) {
       ({ error } = await supabase
         .from("entrenos")
-        .update({ peso: pesoVal, nota })
+        .update({ peso: pesoVal, nota: notaActual })
         .eq("id", existente.id));
     } else {
       ({ error } = await supabase
         .from("entrenos")
-        .insert({ fecha: hoy, dia, ejercicio_id: ejercicioId, peso: pesoVal, nota }));
+        .insert({ fecha: hoy, dia, ejercicio_id: ejercicioId, peso: pesoVal, nota: notaActual }));
     }
 
     if (error) {
@@ -86,16 +105,8 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
       return;
     }
     setEstado("ok");
-    setUltimo({ peso, nota, fecha: hoy });
+    setUltimo({ peso: pesoActual, nota: notaActual, fecha: hoy });
     setTimeout(() => setEstado("idle"), 2000);
-  }
-
-  function onChange(setter: (v: string) => void) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setter(e.target.value);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => guardar(), 900);
-    };
   }
 
   if (hasSession === null) return null;
@@ -118,23 +129,34 @@ export default function ExerciseTracker({ dia, ejercicioId }: Props) {
           Peso hoy
         </label>
         <input
-          type="number"
+          type="text"
           inputMode="decimal"
-          step="0.5"
+          pattern="[0-9]*[.,]?[0-9]*"
+          maxLength={6}
           value={peso}
-          onChange={onChange(setPeso)}
-          placeholder="kg"
-          className="ml-auto w-24 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5 text-right text-sm font-bold tabular-nums focus:border-[var(--color-accent)] focus:outline-none"
+          onChange={(e) => {
+            const v = e.target.value;
+            // permitir solo dígitos y un único punto/coma
+            if (/^\d{0,3}([.,]\d{0,2})?$/.test(v)) {
+              setPeso(v);
+              setDirty(true);
+            }
+          }}
+          placeholder="0"
+          className="ml-auto w-28 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-2 text-right text-base font-bold tabular-nums focus:border-[var(--color-accent)] focus:outline-none"
         />
         <span className="text-xs text-[var(--color-text-muted)]">kg</span>
       </div>
 
       <textarea
-        rows={1}
+        rows={2}
         value={nota}
-        onChange={onChange(setNota)}
+        onChange={(e) => {
+          setNota(e.target.value);
+          setDirty(true);
+        }}
         placeholder="Notas…"
-        className="mt-2 w-full resize-none rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5 text-xs focus:border-[var(--color-accent-warm)] focus:outline-none"
+        className="mt-2 w-full resize-y rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5 text-xs leading-relaxed focus:border-[var(--color-accent-warm)] focus:outline-none"
       />
 
       <div className="mt-1.5 flex min-h-[14px] items-center justify-between text-[10px]">
